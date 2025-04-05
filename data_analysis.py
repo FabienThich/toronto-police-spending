@@ -40,12 +40,6 @@ class Entry:
         self._long_name = str(data[10])
         self._cost_estimate = float(str(data[11].replace(',','')))
 
-        if 'division' in self.unit_name.lower():
-            self._division = self.unit_name[:11]
-
-        else:
-            self_division = None
-
     @property
     def id(self):
         return self._id
@@ -73,11 +67,6 @@ class Entry:
     @property
     def long_name(self):
         return self._long_name
-
-    @property
-    def division(self):
-        return self._division
-
 
     def __str__(self):
         return f"Entry({self._id}, {self._year}, {self._budget_type}, {self._organization}, {self._command_name}, {self._pillar_name}, {self._district_name}, {self._unit_name}, {self._feature_category}, {self._cost_element}, {self._long_name}, {self._cost_estimate})"
@@ -247,7 +236,7 @@ class Dataset:
 
         return count
 
-    def category(self, category: str = None) -> List[Entry]:
+    def category(self, category: str = None) -> float:
         """
         Returns the cost estimate for a specific feature category. Users who do not pass
         a parameter to get will get the sum of cost estimate for 'Not_Used'

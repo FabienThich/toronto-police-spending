@@ -68,3 +68,4 @@ print('_' * 50)
 
 for category, estimate in data_all.category_summary().items():
     print(f'{category :<20} | {round(estimate,2)}')
+

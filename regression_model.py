@@ -28,17 +28,28 @@ class LinearRegression:
         Save the R^2 value and the parameters of this model as attributes of `self`.
 
 
-        >>> load_data = BUDGET_2020 + BUDGET_2021[1:] + BUDGET_2022[1:] + BUDGET_2023[1:] + BUDGET_2024[1:]
+        >>> load_data = BUDGET_2023[1:] + BUDGET_2024[1:] + BUDGET_2025[1:]
         >>> filter_data = [row for row in load_data[1:] if row[-1] != 0]
         >>> data = Dataset([Entry(row) for row in filter_data])
         >>> model = LinearRegression()
         >>> model.train(data.data)
         >>> round(model.a,2)
-        119957491.61
+        -13925353.5
         >>> round(model.b,2)
-        -59175.1
+        6986.78
         >>> model.r_squared
-        0.0012822746619163491
+        8.967844545275445e-06
+        >>> load_data = BUDGET_2020[1:] + BUDGET_2021[1:] + BUDGET_2022[1:]
+        >>> filter_data = [row for row in load_data[1:] if row[-1] != 0]
+        >>> data = Dataset([Entry(row) for row in filter_data])
+        >>> model = LinearRegression()
+        >>> model.train(data.data)
+        >>> round(model.a,2)
+        68409402.44
+        >>> round(model.b,2)
+        -33662.5
+        >>> model.r_squared
+        0.00014152559725780158
         """
 
         self.xs = [entry.year for entry in entries]
@@ -61,15 +72,22 @@ class LinearRegression:
 
 
     def predict(self, year: int) -> float:
-        """Use the parameters of the regression model to predict an overall rating for 2026.
+        """Use the parameters of the regression model to predict an overall budget for 2026.
 
         >>> model = LinearRegression()
-        >>> model.a = 119957491.61
-        >>> model.b = -59175.1
+        >>> model.a = 68409402.44
+        >>> model.b = -33662.5
         >>> round(model.predict(2025),2)
-        127914.11
+        242839.94
         >>> round(model.predict(2026),2)
-        68739.01
+        209177.44
+        >>> model_2 = LinearRegression()
+        >>> model_2.a = -13925353.5
+        >>> model_2.b = 6986.78
+        >>> round(model_2.predict(2025),2)
+        222876.0
+        >>> round(model_2.predict(2026),2)
+        229862.78
         """
 
         return self.b * year + self.a
