@@ -40,6 +40,12 @@ class Entry:
         self._long_name = str(data[10])
         self._cost_estimate = float(str(data[11].replace(',','')))
 
+        if 'division' in self.unit_name.lower():
+            self._division = self.unit_name[:11]
+
+        else:
+            self_division = None
+
     @property
     def id(self):
         return self._id
@@ -67,6 +73,10 @@ class Entry:
     @property
     def long_name(self):
         return self._long_name
+
+    @property
+    def division(self):
+        return self._division
 
 
     def __str__(self):
@@ -125,13 +135,13 @@ class Dataset:
         >>> data = Dataset([Entry(row) for row in BUDGET_2020[1:]])
         >>> result_data = data.division_summary()
         >>> print(result_data)
-        {'division 55': 86667845.55999999, 'division 41': 67248663.44999999, 'division 51': 66399777.29000002, 'division 14': 65282817.64999999, 'division 52': 61139801.5, 'division 43': 60995862.34000002, 'division 31': 55822911.800000004, 'division 23': 55371084.11000001, 'division 32': 52578103.09000001, 'division 42': 51723490.07000001, 'division 22': 49815000.06000001, 'division 11': 49190022.349999994, 'division 12': 48791360.88, 'division 53': 39459667.76, 'division 13': 39251704.59, 'division 33': 37575703.89999999}
+        {'division 55': 86667845.56, 'division 41': 67248663.45, 'division 51': 66399777.29, 'division 14': 65282817.65, 'division 52': 61139801.5, 'division 43': 60995862.34, 'division 31': 55822911.8, 'division 23': 55371084.11, 'division 32': 52578103.09, 'division 42': 51723490.07, 'division 22': 49815000.06, 'division 11': 49190022.35, 'division 12': 48791360.88, 'division 53': 39459667.76, 'division 13': 39251704.59, 'division 33': 37575703.9}
         >>> print(result_data.keys())
         dict_keys(['division 55', 'division 41', 'division 51', 'division 14', 'division 52', 'division 43', 'division 31', 'division 23', 'division 32', 'division 42', 'division 22', 'division 11', 'division 12', 'division 53', 'division 13', 'division 33'])
         >>> print(list(result_data.items())[:3])
-        [('division 55', 86667845.55999999), ('division 41', 67248663.44999999), ('division 51', 66399777.29000002)]
+        [('division 55', 86667845.56), ('division 41', 67248663.45), ('division 51', 66399777.29)]
         >>> print(list(result_data.items())[-3:])
-        [('division 53', 39459667.76), ('division 13', 39251704.59), ('division 33', 37575703.89999999)]
+        [('division 53', 39459667.76), ('division 13', 39251704.59), ('division 33', 37575703.9)]
         """
         grouped_data = {}
 
@@ -142,6 +152,8 @@ class Dataset:
                 grouped_data[division_name] = 0
 
             grouped_data[division_name] += abs(row.cost_estimate)
+
+        grouped_data = {division: round(estimate, 2) for division, estimate in grouped_data.items()}
 
         result_data = dict(sorted(grouped_data.items(), key=lambda x: x[1], reverse=True))
         # print(result_data)
@@ -281,5 +293,45 @@ class Dataset:
                     sum += row.cost_estimate
 
         return round(sum, 2)
+
+    def category_summary(self) -> Dict[str, float]:
+        """
+        Returns a summary of all the feature categories with their total cost estimates, sorted from the greatest to least accumulated budget.
+
+        >>> data = Dataset([Entry(row) for row in BUDGET_2020[1:]])
+        >>> result = data.category_summary()
+        >>> print(result)
+        {'Salaries': 1697999070.22, 'Benefits': 450207787.95, 'Revenues': 285502876.04, 'Services': 229693764.44, 'Premium Pay': 121991811.75, 'Materials & Supplies': 45030286.94, 'Equipment': 18837420.52}
+        >>> print(Dataset([Entry(row) for row in BUDGET_2021[1:]]).category_summary())
+        {'Salaries': 1723847396.57, 'Benefits': 482721110.33, 'Revenues': 300853483.03, 'Services': 201122840.73, 'Premium Pay': 121373249.58, 'Materials & Supplies': 45681993.79, 'Equipment': 19081443.96}
+        >>> print(Dataset([Entry(row) for row in BUDGET_2022[1:]]).category_summary())
+        {'Salaries': 1750624702.0, 'Benefits': 507433586.0, 'Revenues': 313390335.0, 'Services': 208761051.0, 'Premium Pay': 142050712.0, 'Materials & Supplies': 50192731.0, 'Equipment': 17432490.0}
+        >>> print(Dataset([Entry(row) for row in BUDGET_2023[1:]]).category_summary())
+        {'Salaries': 1843629238.35, 'Benefits': 538193251.28, 'Revenues': 370540168.9, 'Services': 221043789.02, 'Premium Pay': 153737005.47, 'Materials & Supplies': 53463877.8, 'Equipment': 26648572.44, 'Not_Used': 0.0}
+        >>> print(Dataset([Entry(row) for row in BUDGET_2024[1:]]).category_summary())
+        {'Salaries': 992908800.0, 'Benefits': 289209400.0, 'Revenues': 190149400.0, 'Services': 97587200.0, 'Premium Pay': 62212000.0, 'Materials & Supplies': 29959000.0, 'Equipment': 7777700.0, 'Not_Used': 0.0}
+        >>> print(Dataset([Entry(row) for row in BUDGET_2025[1:]]).category_summary())
+        {'Salaries': 993505100.0, 'Benefits': 307027600.0, 'Revenues': 201254100.0, 'Services': 103312400.0, 'Premium Pay': 64412000.0, 'Materials & Supplies': 29698000.0, 'Equipment': 9495900.0, 'Not_Used': 0.0}
+
+        """
+        grouped_data = {}
+
+        for row in self.data:
+            category_name = row.feature_category
+            if '-' in category_name and category_name[0].isdigit():
+
+                # Some entries were entered with a prefix: '1-Salaries' and 'Salaries' were used interchangeably
+                category_name = category_name.split('-')[1].strip()
+
+            if category_name not in grouped_data:
+                grouped_data[category_name] = 0
+
+            grouped_data[category_name] += abs(row.cost_estimate)
+
+        grouped_data = {category: round(estimate,2) for category, estimate in grouped_data.items()}
+
+        result_data = dict(sorted(grouped_data.items(), key=lambda x: x[1], reverse=True))
+
+        return result_data
 
 # print([x.cost_actual for x in data_2023._data[1:10]])

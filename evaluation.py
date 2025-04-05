@@ -19,43 +19,52 @@ print(f'2025   |    {data_2025.calculate_cost_estimate(1)}')
 
 print('_' * 50)
 
-print('Division Summary 2020-2025')
-print('Division       |     Cost Estimate')
+print('\nDivision Summary 2020-2025')
+print(f'Division        | Cost Estimate')
 print('_' * 50)
 
 for division, estimate in data_all.division_summary().items():
-    print(f'{division}    |     {round(estimate,2)}')
+    print(f'{division:<15} | {round(estimate,2)}')
 
 print('\nKey takeaway: division 54 appeared from the dataset from 2022 and on. But this is the cost estimate for all of 2020-2025.')
 
-print('_' * 50)
-print('Division Summary 2020')
-print('Division       |     Cost Estimate')
+# print('_' * 50)
+# print('Division Summary 2020')
+# print('Division       |     Cost Estimate')
+# print('_' * 50)
+#
+# for division, estimate in data_2020.division_summary().items():
+#     print(f'{division}    |     {round(estimate,2)}')
+#
+# print('_' * 50)
+# print('Division Summary 2021')
+# print('Division       |     Cost Estimate')
+# print('_' * 50)
+#
+# for division, estimate in data_2021.division_summary().items():
+#     print(f'{division}    |     {round(estimate,2)}')
+#
+# print('_' * 50)
+# print('Division Summary 2022')
+# print('Division       |     Cost Estimate')
+# print('_' * 50)
+#
+# for division, estimate in data_2022.division_summary().items():
+#     print(f'{division}    |     {round(estimate,2)}')
+#
+# print('_' * 50)
+# print('Division Summary 2023')
+# print('Division       |     Cost Estimate')
+# print('_' * 50)
+#
+# for division, estimate in data_2023.division_summary().items():
+#     print(f'{division}    |     {round(estimate,2)}')
+
 print('_' * 50)
 
-for division, estimate in data_2020.division_summary().items():
-    print(f'{division}    |     {round(estimate,2)}')
-
-print('_' * 50)
-print('Division Summary 2021')
-print('Division       |     Cost Estimate')
+print('\nCategory Summary 2020-2025')
+print('Category             | Cost Estimate')
 print('_' * 50)
 
-for division, estimate in data_2021.division_summary().items():
-    print(f'{division}    |     {round(estimate,2)}')
-
-print('_' * 50)
-print('Division Summary 2022')
-print('Division       |     Cost Estimate')
-print('_' * 50)
-
-for division, estimate in data_2022.division_summary().items():
-    print(f'{division}    |     {round(estimate,2)}')
-
-print('_' * 50)
-print('Division Summary 2023')
-print('Division       |     Cost Estimate')
-print('_' * 50)
-
-for division, estimate in data_2023.division_summary().items():
-    print(f'{division}    |     {round(estimate,2)}')
+for category, estimate in data_all.category_summary().items():
+    print(f'{category :<20} | {round(estimate,2)}')
